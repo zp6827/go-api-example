@@ -38,13 +38,17 @@ func handleRequests() {
 	log.Fatal(http.ListenAndServe(":10000", nil))
 }
 
+// TODO: Break out response logic into own function
 func handleValidateIpAddress(w http.ResponseWriter, r *http.Request) { 
 	fmt.Println("Received request at validateIpAddress")
 	decoder := json.NewDecoder(r.Body)
     var requestBody RequestBody
     err := decoder.Decode(&requestBody)
     if err != nil {
-        panic(err)
+		errorString := "Failed to decode request body. 
+		Ensure request is valid JSON and contains fields `ipAddress` and `validCountries`"
+        writeResponse(w, false, errorString, 400)
+		return
     }
 
 	countryName := getCountryNameForIpAddress(requestBody.IpAddress)
@@ -55,6 +59,7 @@ func handleValidateIpAddress(w http.ResponseWriter, r *http.Request) {
 	} 
 
 	response := Response{isCountryValid, ""}
+	// fmt.Println("Response", response)
 	responseJson, err := json.Marshal(response)
 	if err != nil { 
 		panic(err)
@@ -63,7 +68,20 @@ func handleValidateIpAddress(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type","application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseJson)
-	// fmt.Println("Response", response)
+}
+
+func writeResponse(w http.ResponseWriter, isCountryValid bool, errorString string, httpStatusCode int) { 
+	w.Header().Set("Content-Type","application/json")
+
+	response := Response{isCountryValid, errorString}
+	responseJson, err := json.Marshal(response)
+	// TODO: how do we handle this
+	if err != nil { 
+		panic(err)
+	}
+
+	w.WriteHeader(httpStatusCode)
+	w.Write(responseJson)
 }
 
 func getCountryNameForIpAddress(ipAddress string) string { 
