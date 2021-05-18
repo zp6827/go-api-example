@@ -45,8 +45,8 @@ func handleValidateIpAddress(w http.ResponseWriter, r *http.Request) {
     var requestBody RequestBody
     err := decoder.Decode(&requestBody)
     if err != nil {
-		errorString := "Failed to decode request body. 
-		Ensure request is valid JSON and contains fields `ipAddress` and `validCountries`"
+		errorString := `Failed to decode request body. 
+		Ensure request is valid JSON and contains fields "ipAddress" and "validCountries"`
         writeResponse(w, false, errorString, 400)
 		return
     }
