@@ -7,8 +7,7 @@ import (
 	"encoding/json"
 	"github.com/IncSW/geoip2"
 	"net"
-	// "io/ioutil"
-	// "errors"
+	"errors"
 )
 
 type RequestBody struct { 
@@ -51,23 +50,21 @@ func handleValidateIpAddress(w http.ResponseWriter, r *http.Request) {
 		return
     }
 
-	countryName := getCountryNameForIpAddress(requestBody.IpAddress)
+	countryName, err := getCountryNameForIpAddress(requestBody.IpAddress)
+	if err != nil {
+		writeResponse(w, false, err.Error(), 400)
+		return
+	}
+
 	isCountryValid := contains(requestBody.ValidCountries, countryName)
 
+	// TODO: Remove this log
 	if isCountryValid { 
 		fmt.Println("Country Name is Valid")
 	} 
 
-	response := Response{isCountryValid, ""}
-	// fmt.Println("Response", response)
-	responseJson, err := json.Marshal(response)
-	if err != nil { 
-		panic(err)
-	}
-
-	w.Header().Set("Content-Type","application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(responseJson)
+	writeResponse(w, isCountryValid, "", 200)
+	return
 }
 
 func writeResponse(w http.ResponseWriter, isCountryValid bool, errorString string, httpStatusCode int) { 
@@ -75,26 +72,30 @@ func writeResponse(w http.ResponseWriter, isCountryValid bool, errorString strin
 
 	response := Response{isCountryValid, errorString}
 	responseJson, err := json.Marshal(response)
+
 	// TODO: how do we handle this
 	if err != nil { 
-		panic(err)
+		fmt.Println("OH NO, FAILED TRYING TO CONVERT THIS TO JSON")
 	}
 
 	w.WriteHeader(httpStatusCode)
 	w.Write(responseJson)
 }
 
-func getCountryNameForIpAddress(ipAddress string) string { 
+func getCountryNameForIpAddress(ipAddress string) (string, error) { 
 	parsedIp := net.ParseIP(ipAddress)
 	if parsedIp == nil {
-		panic("err")
+		err := errors.New("Unable to parse IP Address")
+		return "", err
 	}
+
 	record, err := countryReader.Lookup(parsedIp)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
+
 	countryName := record.Country.Names["en"]
-	return countryName
+	return countryName, nil
 }
 
 // Utility function to return whether a value exists in a slice
@@ -104,7 +105,6 @@ func contains(s []string, str string) bool {
 			return true
 		}
 	}
-
 	return false
 }
 
