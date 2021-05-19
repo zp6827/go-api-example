@@ -72,7 +72,7 @@ func writeResponse(w http.ResponseWriter, isCountryValid bool, errorString strin
 
 	if err != nil {
 		responseJson, _ := json.Marshal(Response{false, "Failed to successfully parse response data."}) 
-		w.WriteHeader(httpStatusCode)
+		w.WriteHeader(500)
 		w.Write(responseJson)
 		return
 	}
