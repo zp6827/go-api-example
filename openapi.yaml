@@ -1,0 +1,65 @@
+swagger: "2.0"
+info:
+  description: "This is a sample GoLang server that handles a single endpoint resposible for determining whether a user is logging in from an allowed location (country)."
+  version: "1.0.0"
+  title: "IP Address Locale Validator"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "example.swagger.io"
+basePath: "/api/v1"
+tags:
+- name: "Validate IP Address"
+  description: "Validate country of IP Address"
+schemes:
+- "http"
+paths:
+  /validateIpAddress:
+    post:
+      tags:
+      - "Validate IP Address"
+      summary: "Determine whether the user is logging in from a whitelisted country"
+      description: ""
+      operationId: "validateIp"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "IP of user and list of countries they are allowed to login from"
+        required: true
+        schema:
+          $ref: "#/definitions/Request"
+      responses:
+        "200":
+          description: "Valid request/body"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        "400":
+          description: "Invalid request/body"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+definitions:
+  Request:
+    type: "object"
+    required:
+    - "ipAddress"
+    - "validCountries"
+    properties:
+      ipAddress:
+        type: "string"
+        example: "79.209.24.0"
+      validCountries:
+        type: "array"
+        items:
+          type: "string"
+    
+  ApiResponse:
+    type: "object"
+    properties:
+      isCountryValid:
+        type: "boolean"
+      errorString:
+        type: "string"
