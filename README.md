@@ -14,9 +14,13 @@
 * We will need to periodically update the database used for mapping IPs to countries. We could create a small service that fetched the DB from the URL and updated the copy in the local filesystem. We could run this on a regular interval (i.e. once daily/weekly). In my searching, I found a package [gocron](https://github.com/go-co-op/gocron) that would allow us to do this very easily.
 
 ## Example cURL requests
-```
+```bash
+# USA IP - valid
 curl -d '{"ipAddress":"74.209.24.0", "validCountries":["United States", "Brazil", "Germany"]}' -H "Content-Type: application/json" -X POST http://localhost:10000/api/v1/validateIpAddress
+# Brazil IP - valid
 curl -d '{"ipAddress":"2.16.15.2", "validCountries":["United States", "Brazil", "Germany"]}' -H "Content-Type: application/json" -X POST http://localhost:10000/api/v1/validateIpAddress
+# Germany IP - valid
 curl -d '{"ipAddress":"2.16.9.2", "validCountries":["United States", "Brazil", "Germany"]}' -H "Content-Type: application/json" -X POST http://localhost:10000/api/v1/validateIpAddress
+# Spain IP - not valid
 curl -d '{"ipAddress":"1.178.224.1", "validCountries":["United States", "Brazil", "Germany"]}' -H "Content-Type: application/json" -X POST http://localhost:10000/api/v1/validateIpAddress
 ```
