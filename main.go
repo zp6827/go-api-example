@@ -24,6 +24,7 @@ var countryReader *geoip2.CountryReader
 const dbPath = "testdata/GeoLite2-Country.mmdb"
 
 func init() { 
+	// Instantiate the db reader on init
 	reader, err := geoip2.NewCountryReaderFromFile(dbPath)
 	if err != nil { 
 		panic(err)
@@ -37,7 +38,7 @@ func handleRequests() {
 	log.Fatal(http.ListenAndServe(":10000", nil))
 }
 
-// TODO: Break out response logic into own function
+// Handle the request and respond appropriately
 func handleValidateIpAddress(w http.ResponseWriter, r *http.Request) { 
 	fmt.Println("Received request at validateIpAddress")
 	decoder := json.NewDecoder(r.Body)
@@ -58,15 +59,11 @@ func handleValidateIpAddress(w http.ResponseWriter, r *http.Request) {
 
 	isCountryValid := contains(requestBody.ValidCountries, countryName)
 
-	// TODO: Remove this log
-	if isCountryValid { 
-		fmt.Println("Country Name is Valid")
-	} 
-
 	writeResponse(w, isCountryValid, "", 200)
 	return
 }
 
+// Wrapper function for creating/writing the response
 func writeResponse(w http.ResponseWriter, isCountryValid bool, errorString string, httpStatusCode int) { 
 	w.Header().Set("Content-Type","application/json")
 
@@ -82,6 +79,7 @@ func writeResponse(w http.ResponseWriter, isCountryValid bool, errorString strin
 	w.Write(responseJson)
 }
 
+// Returns the country name associated with the given IP address
 func getCountryNameForIpAddress(ipAddress string) (string, error) { 
 	parsedIp := net.ParseIP(ipAddress)
 	if parsedIp == nil {
