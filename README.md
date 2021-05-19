@@ -1,14 +1,16 @@
 # GoLang API Example
 
 ## Running Manually
-* Clone the repository and run `go run main.go` from inside of the `go-api-example` directory. 
+* Clone the repository and run `go run main.go` from inside of the `go-api-example/src` directory. 
 * Send POST request to localhost:10000/api/v1/validateIpAddress with the body (json) matching the schema laid out in the openapi.yaml file.
     * **NOTE:** There are sample cURL requests below for testing.
+* Exit the program with ctrl+c
 
 ## Running Via Docker
 * Navigate into `go-api-example` and run `docker build -t go-api-example-dev .`
 * Run `docker run --rm -it -p 10000:10000 go-api-example-dev`
 * You should now be able to send a POST request to localhost:10000/api/v1/validateIpAddress (see cURL requests or openapi.yml in repository for schema/examples)
+* Exit the program with ctrl+c
 
 ## Future Improvements
 * Implement custom error types to better convey to the client why the error occured. 
