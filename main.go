@@ -40,7 +40,7 @@ func handleRequests() {
 
 // Handle the request and respond appropriately
 func handleValidateIpAddress(w http.ResponseWriter, r *http.Request) { 
-	fmt.Println("Received request at validateIpAddress")
+	fmt.Println("Received request at api/v1/validateIpAddress")
 	decoder := json.NewDecoder(r.Body)
     var requestBody RequestBody
     err := decoder.Decode(&requestBody)
@@ -70,9 +70,11 @@ func writeResponse(w http.ResponseWriter, isCountryValid bool, errorString strin
 	response := Response{isCountryValid, errorString}
 	responseJson, err := json.Marshal(response)
 
-	// TODO: how do we handle this
-	if err != nil { 
-		fmt.Println("OH NO, FAILED TRYING TO CONVERT THIS TO JSON")
+	if err != nil {
+		responseJson, _ := json.Marshal(Response{false, "Failed to successfully parse response data."}) 
+		w.WriteHeader(httpStatusCode)
+		w.Write(responseJson)
+		return
 	}
 
 	w.WriteHeader(httpStatusCode)
