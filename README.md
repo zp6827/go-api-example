@@ -17,12 +17,13 @@
 * Expose the service to gRPC as well. 
     * In order to do this, we would need to separate the server logic from the handling logic. We could have three main functional files: One for defining/handling REST routes, one for defining/handling gRPC routes, and another file for the actual logic of grabbing the country for the IP. 
 * In order to escape the concerns of parsing the countries by string name, we could require our service to receive a list of country codes as opposed to country names. We could perform the lookup by country code instead of name (to eliminate errors such as capitalization/misspellings/foreign languages)
-* Encapsulate this in a docker container for ease of running/distribution.
+* Right now, I believe that the methods called from `handleValidateIpAddress` probably do too much. Its throwing red flags that we are possibly returning three different errors from one single function. If I had more time, I would break these functions out to simplify the error-handling and general readability. 
 
 ## Ideas for Scaling
 * We will need to periodically update the database used for mapping IPs to countries. We could create a small service that fetched the DB from the URL and updated the copy in the local filesystem. We could run this on a regular interval (i.e. once daily/weekly). In my searching, I found a package [gocron](https://github.com/go-co-op/gocron) that would allow us to do this very easily.
 * We could separate a lot of this logic out to their own files as opposed to having everything exist in main.go. For example, custom types and general logic can move out to other files as we expand. 
 * Implement a better approach to versioning. Right now, all endpoints are to api/v1/validateIpAddress. As we improve this API and possibly add more endpoints, we can branch off by version number and route requests based on the API version. I.e. api/v1, api/v2. . .
+* Allow the IP/Port to be set via environment variables as opposed to being hardcoded into the files
 
 ## Example cURL requests
 ```bash
