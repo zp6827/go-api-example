@@ -3,10 +3,6 @@ info:
   description: "This is a sample GoLang server that handles a single endpoint resposible for determining whether a user is logging in from an allowed location (country)."
   version: "1.0.0"
   title: "IP Address Locale Validator"
-  license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "example.swagger.io"
 basePath: "/api/v1"
 tags:
 - name: "Validate IP Address"
@@ -36,11 +32,11 @@ paths:
         "200":
           description: "Valid request/body"
           schema:
-            $ref: "#/definitions/ApiResponse"
+            $ref: "#/definitions/GoodApiResponse"
         "400":
           description: "Invalid request/body"
           schema:
-            $ref: "#/definitions/ApiResponse"
+            $ref: "#/definitions/BadApiResponse"
 definitions:
   Request:
     type: "object"
@@ -55,11 +51,24 @@ definitions:
         type: "array"
         items:
           type: "string"
+          example: ["United Status", "Brazil", "Germany"]
     
-  ApiResponse:
+  GoodApiResponse:
     type: "object"
     properties:
       isCountryValid:
         type: "boolean"
       errorString:
         type: "string"
+        example: ""
+        
+  BadApiResponse:
+    type: "object"
+    properties:
+      isCountryValid:
+        type: "boolean"
+        example: false
+      errorString:
+        type: "string"
+        example: "Unable to parse IP Address."
+  

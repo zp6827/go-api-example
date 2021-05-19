@@ -1,7 +1,8 @@
 # GoLang API Example
 
 ## Running Instructions
-To run this application, clone the repository and run `go run main.go` from inside of the `go-api-example` directory. 
+* Clone the repository and run `go run main.go` from inside of the `go-api-example` directory. 
+* Send an API request to localhost:10000/api/v1/validateIpAddress with the body matching the schema laid out in the openapi.yaml file.
 
 ## Future Improvements
 * Implement custom error types to better convey to the client why the error occured. 

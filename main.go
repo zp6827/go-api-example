@@ -34,7 +34,7 @@ func init() {
 }
 
 func handleRequests() { 
-	http.HandleFunc("/validateIpAddress", handleValidateIpAddress)
+	http.HandleFunc("/api/v1/validateIpAddress", handleValidateIpAddress)
 	log.Fatal(http.ListenAndServe(":10000", nil))
 }
 
